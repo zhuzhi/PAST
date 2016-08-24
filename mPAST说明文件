@@ -1,0 +1,83 @@
+##########################################################################################################
+# 1. mPAST -- mPAST
+########################################################################################################## 
+#
+# 方法：
+# 		T_max is taken to be the maximal value of T_D_k
+# 公式:
+#		T_D = (X_case - N_Case/N_control*X_control)/sqrt(X_case + N_Case/N_control*X_control)
+# 其中： D_k is the set containing the variants with the k smallest risk ratios.
+#
+# 输入: 
+# 		data_table: case/control table, row names 为 "case", "control"
+#		alpha_level: significance level
+#		N_case: case组的总人数
+#		N_control: control组的总人数
+# 输出:
+#		mPAST结果
+# 流程:
+# 		1. sorting: 决定各个 D_k
+#		2. 由公式计算各个 T_k，并且得到最终 T_k
+##########################################################################################################
+
+
+##########################################################################################################
+# 1. mPAST Power -- mPAST Power
+########################################################################################################## 
+#
+# 不同变量:
+#		1. Wright's formular
+#		2. Significance level: 0.05
+#		3. Number of variants: 10/50
+#		4. gPAR
+##########################################################################################################
+
+
+
+##########################################################################################################
+# 1. ePAST -- ePAST
+########################################################################################################## 
+#
+# 方法：
+# 		针对每个位点计算 T_j， 通过阈值 C 来选取 risk set D={j| T_j >= C_1 }.
+#		等价的，通过解方程可得到方程:
+#			X_case_j/X_control_j <= 1/(  
+#										N_case/N_control + C_1^2/(2*X_control_j) + 
+#										sqrt(  
+#												(N_case/N_control + N_case^2/N_control^2)*C_1^2/X_control_j + 
+#												C_1^4 /(4*X_control_j^2 )
+#											)      
+#									  )
+#
+# 公式:
+#		T_j = (X_case_j - N_case/N_control*X_control_j)/sqrt(X_case_j + N_case^2/N_control^2*X_control_j) (*1)
+#		C <= 1/(  
+#				 N_case/N_control + C_1^2/(4*N_control*p_hat) + 
+#				 sqrt(  
+#						(N_case/N_control + N_case^2/N_control^2)*C_1^2/(2*N_control*p_hat) + 
+#						 C_1^4 /(16*N_control^2*p_hat^2)   
+#					 )      
+#				)
+#		T_D = (X_case - N_Case/N_control*X_control)/sqrt(X_case + N_Case^2/N_control^2*X_control)
+#
+# 其中： D is the risk allele set determined by C.
+#		p_hat 是对照组中 allele freq 的一个总体估计， 2*N_control*p_hat 是 X_control_j 的一个估计
+# 输入: 
+# 		data_table: case/control table, row names 为 "case", "control"
+#		alpha_level: significance level, 等价于 给出了 C_1
+#		N_case: case组的总人数
+#		N_control: control组的总人数
+# 输出:
+#		ePAST结果
+# 流程:
+# 		1. sorting: 决定各个 D_k
+#		2. 由公式计算各个 T_k，并且得到最终 T_k
+# 注意事项:
+#		1. p_hat 理论上可能为 0，但这里不予考虑，几乎不可能发生。
+#		2. p_hat 去一个固定值，则 X_control_j/(2*N_control)<p_hat 的位点，被选取的概率增大，反之则减小。
+#			即一个固定的 p 有增加 稀有基因 被挑选的概率的好处。
+#		3. X_case_j/X_control_j 有可能出现 X_control_j 为0的情形，此时，直接视为无穷大，排除之。
+##########################################################################################################
+
+
+预先给定的p并不能控制 type-I error。
